@@ -15,8 +15,12 @@ from demand_synthesizer import synthesize_demand
 from IPython.display import clear_output
 
 #%%
-filename = "Network2_12hr_PDA.inp"
-valve_locations = ['12','22','18','7','52','74','37','53']
+# filename = "Network2_12hr_PDA.inp"
+# valve_locations = ['12','22','18','7','52','74','37','53']
+
+filename = "CampisanoNet2_MOD_PUMP.inp"
+valve_locations = ['4','5','7','17','26','29']
+
 filename = make_valve(filename, valve_locations)
 
 network = wntr.network.WaterNetworkModel(filename)
@@ -65,3 +69,5 @@ for index, row in demand_mults.iterrows():
 
 comparison_dataframe['Difference'] = comparison_dataframe["Optimized"] - comparison_dataframe["Baseline"]
 
+#%%
+comparison_dataframe.to_csv(filename.stem+'Results.csv')
