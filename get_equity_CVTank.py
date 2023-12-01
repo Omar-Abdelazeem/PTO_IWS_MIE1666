@@ -9,7 +9,7 @@ import re
 import pathlib
 import nevergrad as ng
 
-def get_equity(filename, setting):
+def get_equity(filename, setting, plot = False):
     # Replace with appropriate path and filename
     directory=pathlib.Path("")
     filename=pathlib.Path(filename)
@@ -68,29 +68,37 @@ def get_equity(filename, setting):
     ADEV = ADEV / len(end_state)
     UC = 1 - ADEV / ASR
     print("Uniformity Coefficient is {}".format(UC))
-    return 1-UC
 
-filename = "CampisanoNet2_CV-Tank_2valves_1.inp"
-network = wntr.network.WaterNetworkModel(filename)
-num_valves = len(network.tcv_name_list)
-null_solution = (0,) * num_valves
-baseline_equity = 1 - get_equity(filename, null_solution)
 
-param = ng.p.TransitionChoice([0, 50, 100, 200, 10000], repetitions=num_valves)
-optimizer = ng.optimizers.NGOpt(parametrization=param, budget=20, num_workers=1)
+    if plot:
+        supply_duration_hr=supply_duration/3600
+        xaxis=np.arange(0,supply_duration_hr+0.00001,reporting_time_step/3600)
 
-recommendation = optimizer.provide_recommendation()
+        fig, ax=plt.subplots()
+        # Change figure size (and aspect ratio) by adjusting height and width here
+        fig.set_figwidth(1.5)
+        fig.set_figheight(1)
 
-for _ in range(optimizer.budget):
-    x = optimizer.ask()
-    # loss = onemax(*x.args, **x.kwargs)  # equivalent to x.value if not using Instrumentation
-    loss = get_equity(filename, x.value)
-    optimizer.tell(x, loss)
+        # Formatting Plot: Setting a Title, x- and y-axis limits, major and minor ticks
+        ax.set_title('Distribution of Demand Satisfaction')
+        ax.set_xlim(0,supply_duration_hr)
+        ax.set_ylim(0,max(median))
+        ax.set_xticks(np.arange(0,supply_duration_hr+1,4))
+        ax.set_xticks(np.arange(0,supply_duration_hr+1,1),minor=True)
+        ax.set_yticks(np.arange(0,max(median),25))
+        ax.tick_params(width=0.5)
 
-recommendation = optimizer.provide_recommendation()
-optimized_equity = 1 - get_equity(filename, recommendation.value)
 
-print("Null Solution yield Equity of {:3.3}% vs. optimized solution of {:3.3}%".format(baseline_equity*100,optimized_equity*100))
-print("Null setting is {}".format(null_solution))
-print("Optimized Setting is {}".format(recommendation.value))
+        # Data to be plotted: Mean as a percentage (hence the multiplication by 100)
+        # Change color by changing the string next to c= and linewidth by value
+        line1,=ax.plot(xaxis,median, c='#d73027',linewidth=0.5)
+        plt.fill_between(xaxis, y1=low_percentile, y2=high_percentile, alpha=0.4, color='#d73027', edgecolor=None)
+        plt.xlabel('Supply Time (hr)')
+        plt.ylabel('Satisfaction Ratio (%)')
+        # Optional: show grid or turn on and off spines (Plot box sides)
+        # ax.grid(visible=True,which='both')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        plt.show
+    return (1-UC)*ASR, ASR
 
