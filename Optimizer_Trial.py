@@ -10,7 +10,7 @@ import re
 import pathlib
 import nevergrad as ng
 from get_equity_PDA import *
-from network_tools import *
+from network_tools_v2 import *
 
 #%%
 filename = "CampisanoNet2_4x_uniform.inp"

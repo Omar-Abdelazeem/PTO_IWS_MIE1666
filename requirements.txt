@@ -1,0 +1,11 @@
+Cython==0.29.34
+ipython==8.8.0
+matplotlib==3.5.2
+nevergrad==0.13.0
+nevergrad==1.0.0
+numpy==1.25.2
+numpy==1.24.3
+pandas==1.5.2
+sphinx_rtd_theme==2.0.0
+wntr==0.4.0
+wntr==0.4.2

@@ -10,7 +10,7 @@ import re
 import pathlib
 import nevergrad as ng
 from get_equity import *
-from network_tools2 import *
+from network_tools_v2 import *
 from demand_synthesizer import synthesize_demand
 from IPython.display import clear_output
 
