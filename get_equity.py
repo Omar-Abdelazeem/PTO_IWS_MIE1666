@@ -12,7 +12,7 @@ import nevergrad as ng
 
 def get_equity_mix(filename, setting, metric='VC',supress_output = False):
     # Replace with appropriate path and filename
-    directory = pathlib.Path("Net_Files")
+    directory = pathlib.Path("/Users/omaraliamer/Desktop/UofT/PhD/Courses/Fall23/MIE1666/PTO_IWS_MIE1666/Net_Files")
     filename=pathlib.Path(filename)
     name_only=str(filename.stem)
     # print("Selected File: ",name_only)

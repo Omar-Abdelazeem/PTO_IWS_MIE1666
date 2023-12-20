@@ -13,15 +13,21 @@ from get_equity import *
 from network_tools_v2 import *
 from demand_synthesizer import synthesize_demand
 from IPython.display import clear_output
+import time
 
 #%% Main Loop
 
+start = time.time()
 # Input File Name and Specify Valve Locations (Pipe IDs on which valves will be places)
+
+filename = "Network3_12hr_PDA.inp"
+valve_locations = ["291", "308", "221", "58", "34", "19", "1", "126", "142", "123", "154", "163"]
+
 # filename = "Network2_12hr_PDA.inp"
 # valve_locations = ['12','22','18','7','52','74','37','53']
 
-filename = "CampisanoNet2_MOD_PUMP.inp"
-valve_locations = ['4','5','7','17','26','29']
+# filename = "CampisanoNet2_MOD_PUMP.inp"
+# valve_locations = ['4','5','7','17','26','29']
 
 # Edit the EPANET file to add the specified valves
 filename = make_valve(filename, valve_locations)
@@ -39,12 +45,12 @@ param = ng.p.TransitionChoice([0, 200, 600, 2000, 5000, 10000], repetitions=num_
 optimizer = ng.optimizers.PortfolioDiscreteOnePlusOne(parametrization=param, budget=100, num_workers=4)
 
 # TEMP: synthesize 1 day's demand for n_dem_nodes nodes
-demand_mults = synthesize_demand(n_dem_nodes,5, seed = 100)
+demand_mults = synthesize_demand(n_dem_nodes,5, seed = 200)
 
 # Dataframe to store results comparing baseline (null solution, no optimization)
 # to the optimized solution
 comparison_dataframe = pd.DataFrame()
-
+#%%
 # Loop over each timestep in the time period
 for index, row in demand_mults.iterrows():
     # get a list of demand multipliers for the current time step
@@ -63,7 +69,7 @@ for index, row in demand_mults.iterrows():
     baseline_equity , baseline_asr = 1 - get_equity(filename2, null_solution)[0], get_equity(filename2, null_solution)[1]
     # store the best equity value
     incumbent  = baseline_equity
-
+    best = null_solution
     # suggest a point to explore
     recommendation = optimizer.provide_recommendation()
 
@@ -96,6 +102,7 @@ for index, row in demand_mults.iterrows():
     comparison_dataframe.at[index,"Baseline"] = baseline_equity * 100
     comparison_dataframe.at[index,"Optimized"] = optimized_equity * 100
 
+execution = time.time() - start
 comparison_dataframe['Difference'] = comparison_dataframe["Optimized"] - comparison_dataframe["Baseline"]
 
 #%%

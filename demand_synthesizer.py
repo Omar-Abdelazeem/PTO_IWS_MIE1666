@@ -10,7 +10,7 @@ import re
 import pathlib
 import nevergrad as ng
 from get_equity import *
-from network_tools2 import *
+from network_tools_v2 import *
 from IPython.display import clear_output
 
 def synthesize_demands(n_nodes, n_days, n_components, seed, plot = False):
@@ -50,6 +50,10 @@ def synthesize_demands(n_nodes, n_days, n_components, seed, plot = False):
 
     if plot:
         fig, ax = plt.subplots()
+        ax.set_xlabel("Time of Day")
+        ax.set_xticks([1,4, 8, 12, 16, 20, 24])
+        ax.set_xlim(1,24)
+        ax.set_ylabel('Demand Multiplier')
         for node in range(n_nodes):
             ax.plot(new_demands.index[0:24], new_demands.iloc[0:24,node])
         
@@ -95,7 +99,7 @@ def synthesize_demand(n_nodes, n_components, seed, plot = False):
     return new_demands
 
 #%%
-# synthesize_demand(20,3, True)
+synthesize_demands(15,7,5, 102, True)
 
 #%% load data
 # demand_patterns = pd.read_csv("DEMAND_PATTERNS.csv")

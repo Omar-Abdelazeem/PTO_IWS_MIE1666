@@ -12,13 +12,13 @@ import nevergrad as ng
 
 def get_equity(filename, setting, supress_output = False):
     # Replace with appropriate path and filename
-    directory = pathlib.Path("Net_Files")
+    directory = pathlib.Path("/Users/omaraliamer/Desktop/UofT/PhD/Courses/Fall23/MIE1666/PTO_IWS_MIE1666/Net_Files")
     filename=pathlib.Path(filename)
     name_only=str(filename.stem)
     # print("Selected File: ",name_only)
     path=directory / filename
     path = path.resolve()
-    # print(path)
+    print(path)
 
     demand_nodes=[]       # For storing list of nodes that have non-zero demands
     desired_demands=[]    # For storing demand rates desired by each node for desired volume calculations
